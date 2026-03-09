@@ -9,12 +9,10 @@
             --amarillo: #ffcd00;
             --azul: #003087;
             --rojo: #c8102e;
-            --verde-palenque: #2e7d32;
-            --naranja-vibrante: #ff6d00;
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             background-color: #fff8e1;
             margin: 0;
             padding: 0;
@@ -28,9 +26,6 @@
             padding: 25px 10px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
-
-        header h1 { margin: 0; font-size: 2.5rem; letter-spacing: 2px; }
-        header p { margin: 5px 0 0; font-weight: 300; }
 
         .container {
             max-width: 500px;
@@ -56,40 +51,36 @@
             border: 2px solid #eee;
             border-radius: 10px;
             box-sizing: border-box;
-            font-size: 1rem;
         }
 
+        /* Estilo multicolor para los productos */
         .producto-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px;
-            background: #f9f9f9;
+            padding: 15px;
             margin-bottom: 10px;
             border-radius: 12px;
-            border-left: 4px solid var(--amarillo);
-        }
-
-        .producto-nombre { font-weight: 600; flex: 1; }
-
-        .controles {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .btn-accion {
-            background: var(--azul);
             color: white;
-            border: none;
-            width: 35px;
-            height: 35px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        /* Colores caribeños alternados cada 2 líneas */
+        .producto-item:nth-child(4n+1), .producto-item:nth-child(4n+2) { background: #ff6d00; } /* Naranja Caribe */
+        .producto-item:nth-child(4n+3), .producto-item:nth-child(4n+4) { background: #2e7d32; } /* Verde Palmera */
+        .producto-item:nth-child(odd) { filter: brightness(1.1); }
+
+        .controles { display: flex; align-items: center; gap: 15px; }
+        .btn-accion {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            border: 2px solid white;
+            width: 35px; height: 35px;
             border-radius: 8px;
             font-size: 1.2rem;
             cursor: pointer;
         }
-
-        .cantidad { font-weight: bold; min-width: 20px; text-align: center; }
 
         .total-box {
             background: #333;
@@ -100,7 +91,6 @@
             margin-top: 20px;
         }
 
-        .total-box h3 { margin: 0; font-size: 0.9rem; text-transform: uppercase; color: #fff; }
         .monto { font-size: 2rem; font-weight: bold; }
 
         .btn-whatsapp {
@@ -114,10 +104,13 @@
             font-weight: bold;
             margin-top: 20px;
             cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
+        }
+
+        .geo-info {
+            font-size: 0.7rem;
+            color: #2e7d32;
+            margin-top: 5px;
+            font-style: italic;
         }
 
         footer {
@@ -125,7 +118,6 @@
             padding: 30px;
             font-size: 0.85rem;
             color: #777;
-            line-height: 1.5;
         }
 
         .hidden { display: none; }
@@ -135,26 +127,27 @@
 
 <header>
     <h1>COCADAS</h1>
-    <p>Tradición y Dulzura de Palenque</p>
+    <p>Sabor de Palenque en Caucasia</p>
 </header>
 
 <div class="container">
     <h2 class="seccion-titulo">Tus Datos</h2>
     <div class="campo">
         <label>Nombre del Cliente</label>
-        <input type="text" id="nombre" placeholder="Ej. Maria Perez">
+        <input type="text" id="nombre">
     </div>
     <div class="campo">
         <label>Dirección de Entrega</label>
-        <input type="text" id="direccion" placeholder="Calle, Carrera, Barrio">
+        <input type="text" id="direccion">
+        <div id="geo-status" class="geo-info">📍 Ubicación lista para adjuntar</div>
     </div>
     <div class="campo">
         <label>Celular</label>
-        <input type="tel" id="celular" placeholder="300 000 0000">
+        <input type="tel" id="celular">
     </div>
     <div class="campo">
         <label>Observaciones</label>
-        <textarea id="obs" rows="2" placeholder="Ej. Sin mucho dulce, dejar en portería..."></textarea>
+        <textarea id="obs" rows="2"></textarea>
     </div>
 
     <input type="checkbox" id="sub_invisible" class="hidden" checked>
@@ -167,7 +160,7 @@
         <div class="monto">$<span id="txt-total">0</span></div>
     </div>
 
-    <button class="btn-whatsapp" onclick="generarPedido()">
+    <button class="btn-whatsapp" onclick="intentarEnvio()">
         Pedir por WhatsApp ➔
     </button>
 </div>
@@ -186,6 +179,15 @@
     
     const PRECIO_UNITARIO = 5000;
     let carrito = {};
+    let userCoords = "No proporcionada";
+
+    // Obtener geolocalización al cargar
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+            userCoords = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+            document.getElementById('geo-status').innerText = "✅ Ubicación GPS vinculada";
+        });
+    }
 
     function cargarMenu() {
         const divMenu = document.getElementById('lista-dulces');
@@ -215,10 +217,21 @@
 
     function calcularTotal() {
         let total = 0;
-        for (let item in carrito) {
-            total += carrito[item] * PRECIO_UNITARIO;
-        }
+        for (let item in carrito) total += carrito[item] * PRECIO_UNITARIO;
         document.getElementById('txt-total').innerText = total.toLocaleString('es-CO');
+    }
+
+    function intentarEnvio() {
+        if (userCoords === "No proporcionada") {
+            navigator.geolocation.getCurrentPosition(pos => {
+                userCoords = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                generarPedido();
+            }, () => {
+                generarPedido(); // Si falla el GPS, envía igual sin mapa
+            });
+        } else {
+            generarPedido();
+        }
     }
 
     function generarPedido() {
@@ -226,24 +239,22 @@
         const dir = document.getElementById('direccion').value;
         const tel = document.getElementById('celular').value;
         const obs = document.getElementById('obs').value;
-        const subscrito = document.getElementById('sub_invisible').checked;
 
         if (!cliente || !dir) {
-            alert("Por favor completa Nombre y Dirección");
+            alert("Completa los datos de entrega");
             return;
         }
 
-        // Fecha y Hora de Colombia
         const ahora = new Date();
-        const opciones = { timeZone: 'America/Bogota', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-        const fechaCol = ahora.toLocaleString('es-CO', opciones);
+        const fechaCol = ahora.toLocaleString('es-CO', { timeZone: 'America/Bogota' });
 
         let factura = `*🧾 FACTURA DE PEDIDO - COCADAS*\n`;
         factura += `_Fecha: ${fechaCol}_\n`;
         factura += `------------------------------------------\n`;
         factura += `*CLIENTE:* ${cliente}\n`;
         factura += `*DIRECCIÓN:* ${dir}\n`;
-        factura += `*CELULAR:* ${tel}\n`;
+        factura += `*GPS:* ${userCoords}\n`;
+        factura += `*TEL:* ${tel}\n`;
         if(obs) factura += `*NOTAS:* ${obs}\n`;
         factura += `------------------------------------------\n`;
         factura += `*PRODUCTOS:*\n`;
@@ -253,28 +264,23 @@
 
         for (let item in carrito) {
             if (carrito[item] > 0) {
-                let subtotal = carrito[item] * PRECIO_UNITARIO;
-                factura += `• ${item} (x${carrito[item]}) : $${subtotal.toLocaleString('es-CO')}\n`;
-                totalFinal += subtotal;
+                let sub = carrito[item] * PRECIO_UNITARIO;
+                factura += `• ${item} (x${carrito[item]}) : $${sub.toLocaleString('es-CO')}\n`;
+                totalFinal += sub;
                 tieneItems = true;
             }
         }
 
-        if (!tieneItems) {
-            alert("¡Agrega al menos una cocada al carrito!");
-            return;
-        }
+        if (!tieneItems) { alert("Elige algún dulce"); return; }
 
         factura += `------------------------------------------\n`;
         factura += `*TOTAL A PAGAR: $${totalFinal.toLocaleString('es-CO')}*\n\n`;
-        factura += `🚀 _Pedido generado por App Vibras Positivas_`;
+        factura += `🚀 _App por Vibras Positivas (3117700431)_`;
 
-        const url = `https://wa.me/573117700431?text=${encodeURIComponent(factura)}`;
-        window.open(url, '_blank');
+        window.open(`https://wa.me/573117700431?text=${encodeURIComponent(factura)}`, '_blank');
     }
 
     cargarMenu();
 </script>
-
 </body>
 </html>
