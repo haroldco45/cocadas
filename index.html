@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COCADAS - Sabor del Caribe</title>
+    <style>
+        :root {
+            --amarillo: #ffcd00;
+            --azul: #003087;
+            --rojo: #c8102e;
+            --blanco: #ffffff;
+            --fondo: #fdf5e6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--fondo);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(to right, var(--amarillo), var(--azul), var(--rojo));
+            color: white;
+            text-align: center;
+            padding: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h2 { color: var(--azul); text-align: center; }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input[type="text"], input[type="tel"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        .producto-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            background: #fff9e6;
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+
+        .producto-info b { color: var(--rojo); }
+
+        .controles {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-qty {
+            background-color: var(--azul);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .total-section {
+            background: var(--azul);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.5rem;
+            margin-top: 20px;
+        }
+
+        .btn-enviar {
+            background-color: #25d366;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .btn-enviar:hover { transform: scale(1.02); }
+
+        footer {
+            text-align: center;
+            font-size: 0.8rem;
+            padding: 20px;
+            color: #666;
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>COCADAS</h1>
+    <p>Sabor Tradicional de Palenque en Caucasia</p>
+</header>
+
+<div class="container">
+    <h2>Datos de Entrega</h2>
+    <div class="form-group">
+        <label>Nombre Completo:</label>
+        <input type="text" id="nombre" placeholder="¿A quién entregamos?">
+    </div>
+    <div class="form-group">
+        <label>Dirección:</label>
+        <input type="text" id="direccion" placeholder="Barrio y dirección exacta">
+    </div>
+    <div class="form-group">
+        <label>Celular:</label>
+        <input type="tel" id="celular" placeholder="Número de contacto">
+    </div>
+    <div class="form-group">
+        <label>Observaciones:</label>
+        <textarea id="obs" rows="2" placeholder="Ej: Portería, dejar en la esquina..."></textarea>
+    </div>
+    
+    <input type="checkbox" id="subs" class="hidden" checked>
+
+    <hr>
+    <h2>Nuestros Dulces ($5.000 c/u)</h2>
+    <div id="lista-productos"></div>
+
+    <div class="total-section">
+        Total: $<span id="gran-total">0</span>
+    </div>
+
+    <button class="btn-enviar" onclick="enviarWhatsApp()">
+        🛒 Pedir por WhatsApp
+    </button>
+</div>
+
+<footer>
+    Desarrollado por <b>Vibras Positivas</b> &copy; 2026<br>
+    Todos los derechos reservados.
+</footer>
+
+<script>
+    const productos = [
+        "Enyucados", "Cocadas Blancas", "Cocadas Cafés", "Dulce de Papaya",
+        "Cocada de Piña", "Cocada de Arequipe", "Bolas de Tamarindo", "Alegrías"
+    ];
+    
+    const precio = 5000;
+    let cantidades = {};
+
+    function init() {
+        const contenedor = document.getElementById('lista-productos');
+        productos.forEach(p => {
+            cantidades[p] = 0;
+            const div = document.createElement('div');
+            div.className = 'producto-card';
+            div.innerHTML = `
+                <div class="producto-info">
+                    <b>${p}</b><br>
+                    <small>$5.000</small>
+                </div>
+                <div class="controles">
+                    <button class="btn-qty" onclick="cambiarCantidad('${p}', -1)">-</button>
+                    <span id="qty-${p}">0</span>
+                    <button class="btn-qty" onclick="cambiarCantidad('${p}', 1)">+</button>
+                </div>
+            `;
+            contenedor.appendChild(div);
+        });
+    }
+
+    function cambiarCantidad(prod, valor) {
+        if (cantidades[prod] + valor >= 0) {
+            cantidades[prod] += valor;
+            document.getElementById(`qty-${prod}`).innerText = cantidades[prod];
+            actualizarTotal();
+        }
+    }
+
+    function actualizarTotal() {
+        let total = 0;
+        for (let p in cantidades) {
+            total += cantidades[p] * precio;
+        }
+        document.getElementById('gran-total').innerText = total.toLocaleString('es-CO');
+    }
+
+    function enviarWhatsApp() {
+        const nombre = document.getElementById('nombre').value;
+        const direccion = document.getElementById('direccion').value;
+        const celular = document.getElementById('celular').value;
+        const obs = document.getElementById('obs').value;
+        
+        if (!nombre || !direccion) {
+            alert("Por favor ingresa nombre y dirección.");
+            return;
+        }
+
+        // Fecha y hora real de Colombia
+        const fecha = new Date().toLocaleString("es-CO", { timeZone: "America/Bogota" });
+
+        let mensaje = `*PEDIDO COCADAS - CAUCASIA*\n`;
+        mensaje += `_Fecha: ${fecha}_\n\n`;
+        mensaje += `*CLIENTE:* ${nombre}\n`;
+        mensaje += `*DIRECCIÓN:* ${direccion}\n`;
+        mensaje += `*TEL:* ${celular}\n`;
+        mensaje += `*OBS:* ${obs}\n\n`;
+        mensaje += `--- DETALLE ---\n`;
+
+        let totalFinal = 0;
+        let tieneProductos = false;
+
+        for (let p in cantidades) {
+            if (cantidades[p] > 0) {
+                let sub = cantidades[p] * precio;
+                mensaje += `• ${p} x${cantidades[p]} = $${sub.toLocaleString('es-CO')}\n`;
+                totalFinal += sub;
+                tieneProductos = true;
+            }
+        }
+
+        if (!tieneProductos) {
+            alert("Agrega al menos un producto.");
+            return;
+        }
+
+        mensaje += `\n*TOTAL A PAGAR: $${totalFinal.toLocaleString('es-CO')}*`;
+        mensaje += `\n\n_Desarrollado por Vibras Positivas_`;
+
+        const flet = encodeURIComponent(mensaje);
+        window.open(`https://wa.me/573117700431?text=${flet}`, '_blank');
+    }
+
+    init();
+</script>
+
+</body>
+</html>
