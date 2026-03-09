@@ -9,108 +9,123 @@
             --amarillo: #ffcd00;
             --azul: #003087;
             --rojo: #c8102e;
-            --blanco: #ffffff;
-            --fondo: #fdf5e6;
+            --verde-palenque: #2e7d32;
+            --naranja-vibrante: #ff6d00;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--fondo);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #fff8e1;
             margin: 0;
             padding: 0;
             color: #333;
         }
 
         header {
-            background: linear-gradient(to right, var(--amarillo), var(--azul), var(--rojo));
+            background: linear-gradient(45deg, var(--amarillo), var(--azul), var(--rojo));
             color: white;
             text-align: center;
-            padding: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            padding: 25px 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
+        header h1 { margin: 0; font-size: 2.5rem; letter-spacing: 2px; }
+        header p { margin: 5px 0 0; font-weight: 300; }
+
         .container {
-            max-width: 600px;
+            max-width: 500px;
             margin: 20px auto;
             background: white;
             padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
 
-        h2 { color: var(--azul); text-align: center; }
+        .seccion-titulo {
+            border-left: 5px solid var(--rojo);
+            padding-left: 10px;
+            margin: 20px 0;
+            color: var(--azul);
+        }
 
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; }
-        input[type="text"], input[type="tel"], textarea {
+        .campo { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input, textarea {
             width: 100%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 10px;
             box-sizing: border-box;
+            font-size: 1rem;
         }
 
-        .producto-card {
+        .producto-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            background: #fff9e6;
+            padding: 12px;
+            background: #f9f9f9;
             margin-bottom: 10px;
-            border-radius: 10px;
+            border-radius: 12px;
+            border-left: 4px solid var(--amarillo);
         }
 
-        .producto-info b { color: var(--rojo); }
+        .producto-nombre { font-weight: 600; flex: 1; }
 
         .controles {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
         }
 
-        .btn-qty {
-            background-color: var(--azul);
-            color: white;
-            border: none;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .total-section {
+        .btn-accion {
             background: var(--azul);
             color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .cantidad { font-weight: bold; min-width: 20px; text-align: center; }
+
+        .total-box {
+            background: #333;
+            color: var(--amarillo);
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 15px;
             text-align: center;
-            font-size: 1.5rem;
             margin-top: 20px;
         }
 
-        .btn-enviar {
-            background-color: #25d366;
+        .total-box h3 { margin: 0; font-size: 0.9rem; text-transform: uppercase; color: #fff; }
+        .monto { font-size: 2rem; font-weight: bold; }
+
+        .btn-whatsapp {
+            background: #25d366;
             color: white;
             border: none;
             width: 100%;
-            padding: 15px;
+            padding: 18px;
+            border-radius: 15px;
             font-size: 1.2rem;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-top: 20px;
             font-weight: bold;
-            transition: transform 0.2s;
+            margin-top: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
         }
-
-        .btn-enviar:hover { transform: scale(1.02); }
 
         footer {
             text-align: center;
-            font-size: 0.8rem;
-            padding: 20px;
-            color: #666;
+            padding: 30px;
+            font-size: 0.85rem;
+            color: #777;
+            line-height: 1.5;
         }
 
         .hidden { display: none; }
@@ -120,141 +135,145 @@
 
 <header>
     <h1>COCADAS</h1>
-    <p>Sabor Tradicional de Palenque en Caucasia</p>
+    <p>Tradición y Dulzura de Palenque</p>
 </header>
 
 <div class="container">
-    <h2>Datos de Entrega</h2>
-    <div class="form-group">
-        <label>Nombre Completo:</label>
-        <input type="text" id="nombre" placeholder="¿A quién entregamos?">
+    <h2 class="seccion-titulo">Tus Datos</h2>
+    <div class="campo">
+        <label>Nombre del Cliente</label>
+        <input type="text" id="nombre" placeholder="Ej. Maria Perez">
     </div>
-    <div class="form-group">
-        <label>Dirección:</label>
-        <input type="text" id="direccion" placeholder="Barrio y dirección exacta">
+    <div class="campo">
+        <label>Dirección de Entrega</label>
+        <input type="text" id="direccion" placeholder="Calle, Carrera, Barrio">
     </div>
-    <div class="form-group">
-        <label>Celular:</label>
-        <input type="tel" id="celular" placeholder="Número de contacto">
+    <div class="campo">
+        <label>Celular</label>
+        <input type="tel" id="celular" placeholder="300 000 0000">
     </div>
-    <div class="form-group">
-        <label>Observaciones:</label>
-        <textarea id="obs" rows="2" placeholder="Ej: Portería, dejar en la esquina..."></textarea>
-    </div>
-    
-    <input type="checkbox" id="subs" class="hidden" checked>
-
-    <hr>
-    <h2>Nuestros Dulces ($5.000 c/u)</h2>
-    <div id="lista-productos"></div>
-
-    <div class="total-section">
-        Total: $<span id="gran-total">0</span>
+    <div class="campo">
+        <label>Observaciones</label>
+        <textarea id="obs" rows="2" placeholder="Ej. Sin mucho dulce, dejar en portería..."></textarea>
     </div>
 
-    <button class="btn-enviar" onclick="enviarWhatsApp()">
-        🛒 Pedir por WhatsApp
+    <input type="checkbox" id="sub_invisible" class="hidden" checked>
+
+    <h2 class="seccion-titulo">Menú ($5.000 c/u)</h2>
+    <div id="lista-dulces"></div>
+
+    <div class="total-box">
+        <h3>Total del Pedido</h3>
+        <div class="monto">$<span id="txt-total">0</span></div>
+    </div>
+
+    <button class="btn-whatsapp" onclick="generarPedido()">
+        Pedir por WhatsApp ➔
     </button>
 </div>
 
 <footer>
-    Desarrollado por <b>Vibras Positivas</b> &copy; 2026<br>
-    Todos los derechos reservados.
+    <b>COCADAS - Caucasia</b><br>
+    App desarrollada por <b>Vibras Positivas (3117700431)</b><br>
+    © Todos los derechos reservados 2026
 </footer>
 
 <script>
-    const productos = [
+    const MENU = [
         "Enyucados", "Cocadas Blancas", "Cocadas Cafés", "Dulce de Papaya",
-        "Cocada de Piña", "Cocada de Arequipe", "Bolas de Tamarindo", "Alegrías"
+        "Cocada de Piña", "Cocada de Arequipe", "Cocada de Guayaba", "Bolas de Tamarindo"
     ];
     
-    const precio = 5000;
-    let cantidades = {};
+    const PRECIO_UNITARIO = 5000;
+    let carrito = {};
 
-    function init() {
-        const contenedor = document.getElementById('lista-productos');
-        productos.forEach(p => {
-            cantidades[p] = 0;
-            const div = document.createElement('div');
-            div.className = 'producto-card';
-            div.innerHTML = `
-                <div class="producto-info">
-                    <b>${p}</b><br>
-                    <small>$5.000</small>
-                </div>
+    function cargarMenu() {
+        const divMenu = document.getElementById('lista-dulces');
+        MENU.forEach(item => {
+            carrito[item] = 0;
+            const card = document.createElement('div');
+            card.className = 'producto-item';
+            card.innerHTML = `
+                <div class="producto-nombre">${item}</div>
                 <div class="controles">
-                    <button class="btn-qty" onclick="cambiarCantidad('${p}', -1)">-</button>
-                    <span id="qty-${p}">0</span>
-                    <button class="btn-qty" onclick="cambiarCantidad('${p}', 1)">+</button>
+                    <button class="btn-accion" onclick="modificar('${item}', -1)">-</button>
+                    <span class="cantidad" id="cant-${item}">0</span>
+                    <button class="btn-accion" onclick="modificar('${item}', 1)">+</button>
                 </div>
             `;
-            contenedor.appendChild(div);
+            divMenu.appendChild(card);
         });
     }
 
-    function cambiarCantidad(prod, valor) {
-        if (cantidades[prod] + valor >= 0) {
-            cantidades[prod] += valor;
-            document.getElementById(`qty-${prod}`).innerText = cantidades[prod];
-            actualizarTotal();
+    function modificar(item, cant) {
+        if (carrito[item] + cant >= 0) {
+            carrito[item] += cant;
+            document.getElementById(`cant-${item}`).innerText = carrito[item];
+            calcularTotal();
         }
     }
 
-    function actualizarTotal() {
+    function calcularTotal() {
         let total = 0;
-        for (let p in cantidades) {
-            total += cantidades[p] * precio;
+        for (let item in carrito) {
+            total += carrito[item] * PRECIO_UNITARIO;
         }
-        document.getElementById('gran-total').innerText = total.toLocaleString('es-CO');
+        document.getElementById('txt-total').innerText = total.toLocaleString('es-CO');
     }
 
-    function enviarWhatsApp() {
-        const nombre = document.getElementById('nombre').value;
-        const direccion = document.getElementById('direccion').value;
-        const celular = document.getElementById('celular').value;
+    function generarPedido() {
+        const cliente = document.getElementById('nombre').value;
+        const dir = document.getElementById('direccion').value;
+        const tel = document.getElementById('celular').value;
         const obs = document.getElementById('obs').value;
-        
-        if (!nombre || !direccion) {
-            alert("Por favor ingresa nombre y dirección.");
+        const subscrito = document.getElementById('sub_invisible').checked;
+
+        if (!cliente || !dir) {
+            alert("Por favor completa Nombre y Dirección");
             return;
         }
 
-        // Fecha y hora real de Colombia
-        const fecha = new Date().toLocaleString("es-CO", { timeZone: "America/Bogota" });
+        // Fecha y Hora de Colombia
+        const ahora = new Date();
+        const opciones = { timeZone: 'America/Bogota', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        const fechaCol = ahora.toLocaleString('es-CO', opciones);
 
-        let mensaje = `*PEDIDO COCADAS - CAUCASIA*\n`;
-        mensaje += `_Fecha: ${fecha}_\n\n`;
-        mensaje += `*CLIENTE:* ${nombre}\n`;
-        mensaje += `*DIRECCIÓN:* ${direccion}\n`;
-        mensaje += `*TEL:* ${celular}\n`;
-        mensaje += `*OBS:* ${obs}\n\n`;
-        mensaje += `--- DETALLE ---\n`;
+        let factura = `*🧾 FACTURA DE PEDIDO - COCADAS*\n`;
+        factura += `_Fecha: ${fechaCol}_\n`;
+        factura += `------------------------------------------\n`;
+        factura += `*CLIENTE:* ${cliente}\n`;
+        factura += `*DIRECCIÓN:* ${dir}\n`;
+        factura += `*CELULAR:* ${tel}\n`;
+        if(obs) factura += `*NOTAS:* ${obs}\n`;
+        factura += `------------------------------------------\n`;
+        factura += `*PRODUCTOS:*\n`;
 
         let totalFinal = 0;
-        let tieneProductos = false;
+        let tieneItems = false;
 
-        for (let p in cantidades) {
-            if (cantidades[p] > 0) {
-                let sub = cantidades[p] * precio;
-                mensaje += `• ${p} x${cantidades[p]} = $${sub.toLocaleString('es-CO')}\n`;
-                totalFinal += sub;
-                tieneProductos = true;
+        for (let item in carrito) {
+            if (carrito[item] > 0) {
+                let subtotal = carrito[item] * PRECIO_UNITARIO;
+                factura += `• ${item} (x${carrito[item]}) : $${subtotal.toLocaleString('es-CO')}\n`;
+                totalFinal += subtotal;
+                tieneItems = true;
             }
         }
 
-        if (!tieneProductos) {
-            alert("Agrega al menos un producto.");
+        if (!tieneItems) {
+            alert("¡Agrega al menos una cocada al carrito!");
             return;
         }
 
-        mensaje += `\n*TOTAL A PAGAR: $${totalFinal.toLocaleString('es-CO')}*`;
-        mensaje += `\n\n_Desarrollado por Vibras Positivas_`;
+        factura += `------------------------------------------\n`;
+        factura += `*TOTAL A PAGAR: $${totalFinal.toLocaleString('es-CO')}*\n\n`;
+        factura += `🚀 _Pedido generado por App Vibras Positivas_`;
 
-        const flet = encodeURIComponent(mensaje);
-        window.open(`https://wa.me/573117700431?text=${flet}`, '_blank');
+        const url = `https://wa.me/573117700431?text=${encodeURIComponent(factura)}`;
+        window.open(url, '_blank');
     }
 
-    init();
+    cargarMenu();
 </script>
 
 </body>
