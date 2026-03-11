@@ -9,11 +9,12 @@
             --amarillo: #ffcd00;
             --azul: #003087;
             --rojo: #c8102e;
+            --fondo: #fff8e1;
         }
 
         body {
             font-family: 'Segoe UI', Roboto, sans-serif;
-            background-color: #fff8e1;
+            background-color: var(--fondo);
             margin: 0;
             padding: 0;
             color: #333;
@@ -23,16 +24,35 @@
             background: linear-gradient(45deg, var(--amarillo), var(--azul), var(--rojo));
             color: white;
             text-align: center;
-            padding: 25px 10px;
+            padding: 20px 10px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .logo-container {
+            background: white;
+            width: 120px;
+            height: 120px;
+            margin: -60px auto 10px;
+            border-radius: 50%;
+            padding: 5px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            overflow: hidden;
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .container {
             max-width: 500px;
-            margin: 20px auto;
+            margin: 70px auto 20px;
             background: white;
             padding: 20px;
-            border-radius: 20px;
+            border-radius: 25px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
 
@@ -41,6 +61,7 @@
             padding-left: 10px;
             margin: 20px 0;
             color: var(--azul);
+            font-size: 1.4rem;
         }
 
         .campo { margin-bottom: 15px; }
@@ -49,38 +70,51 @@
             width: 100%;
             padding: 12px;
             border: 2px solid #eee;
-            border-radius: 10px;
-            box-sizing: border-box;
-        }
-
-        /* Estilo multicolor para los productos */
-        .producto-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            margin-bottom: 10px;
             border-radius: 12px;
-            color: white;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            box-sizing: border-box;
+            font-size: 1rem;
         }
 
-        /* Colores caribeños alternados cada 2 líneas */
-        .producto-item:nth-child(4n+1), .producto-item:nth-child(4n+2) { background: #ff6d00; } /* Naranja Caribe */
-        .producto-item:nth-child(4n+3), .producto-item:nth-child(4n+4) { background: #2e7d32; } /* Verde Palmera */
-        .producto-item:nth-child(odd) { filter: brightness(1.1); }
+        /* Diseño de productos con imágenes */
+        .producto-card {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            border: 1px solid #f0f0f0;
+        }
 
-        .controles { display: flex; align-items: center; gap: 15px; }
+        .producto-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .producto-info { flex-grow: 1; }
+        .producto-nombre { font-weight: bold; font-size: 1.1rem; color: #444; }
+        .producto-precio { color: #2e7d32; font-weight: bold; }
+
+        .controles { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
         .btn-accion {
-            background: rgba(255,255,255,0.3);
-            color: white;
-            border: 2px solid white;
-            width: 35px; height: 35px;
-            border-radius: 8px;
+            background: var(--amarillo);
+            color: #333;
+            border: none;
+            width: 30px; height: 30px;
+            border-radius: 50%;
             font-size: 1.2rem;
+            font-weight: bold;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+
+        .cantidad { font-weight: bold; min-width: 20px; text-align: center; }
 
         .total-box {
             background: #333;
@@ -104,10 +138,13 @@
             font-weight: bold;
             margin-top: 20px;
             cursor: pointer;
+            transition: transform 0.2s;
         }
 
+        .btn-whatsapp:active { transform: scale(0.98); }
+
         .geo-info {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: #2e7d32;
             margin-top: 5px;
             font-style: italic;
@@ -119,41 +156,38 @@
             font-size: 0.85rem;
             color: #777;
         }
-
-        .hidden { display: none; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>COCADAS</h1>
-    <p>Sabor de Palenque en Caucasia</p>
+    <h1 style="margin: 0;">COCADAS</h1>
+    <p style="margin: 5px 0 40px;">Tradición y Sabor de Palenque</p>
 </header>
 
+<div class="logo-container">
+    <img src="logococada.PNG" alt="Logo Cocadas">
+</div>
+
 <div class="container">
-    <h2 class="seccion-titulo">Tus Datos</h2>
+    <h2 class="seccion-titulo">Tus Datos de Entrega</h2>
     <div class="campo">
-        <label>Nombre del Cliente</label>
-        <input type="text" id="nombre">
+        <label>Nombre</label>
+        <input type="text" id="nombre" placeholder="¿A quién entregamos?">
     </div>
     <div class="campo">
-        <label>Dirección de Entrega</label>
-        <input type="text" id="direccion">
-        <div id="geo-status" class="geo-info">📍 Ubicación lista para adjuntar</div>
+        <label>Dirección</label>
+        <input type="text" id="direccion" placeholder="Calle, Carrera, Barrio">
+        <div id="geo-status" class="geo-info">📍 Detectando ubicación...</div>
     </div>
     <div class="campo">
         <label>Celular</label>
-        <input type="tel" id="celular">
-    </div>
-    <div class="campo">
-        <label>Observaciones</label>
-        <textarea id="obs" rows="2"></textarea>
+        <input type="tel" id="celular" placeholder="Tu número de contacto">
     </div>
 
-    <input type="checkbox" id="sub_invisible" class="hidden" checked>
-
-    <h2 class="seccion-titulo">Menú ($5.000 c/u)</h2>
-    <div id="lista-dulces"></div>
+    <h2 class="seccion-titulo">Nuestro Menú</h2>
+    <div id="lista-dulces">
+        </div>
 
     <div class="total-box">
         <h3>Total del Pedido</h3>
@@ -161,121 +195,115 @@
     </div>
 
     <button class="btn-whatsapp" onclick="intentarEnvio()">
-        Pedir por WhatsApp ➔
+        PEDIR POR WHATSAPP ➔
     </button>
 </div>
 
 <footer>
-    <b>COCADAS - Caucasia</b><br>
-    App desarrollada por <b>Vibras Positivas (3117700431)</b><br>
-    © Todos los derechos reservados 2026
+    <b>COCADAS - Caucasia, Antioquia</b><br>
+    Desarrollado por <b>Vibras Positivas</b><br>
+    © 2026 Todos los derechos reservados
 </footer>
 
 <script>
     const MENU = [
-        "Enyucados", "Cocadas Blancas", "Cocadas Cafés", "Dulce de Papaya",
-        "Cocada de Piña", "Cocada de Arequipe", "Cocada de Guayaba", "Bolas de Tamarindo"
+        { id: "enyucado", nombre: "Enyucado", foto: "enyucado.JPG" },
+        { id: "cocada_leche", nombre: "Cocada de Leche", foto: "cocadeleche.jpg" },
+        { id: "cocada_cafe", nombre: "Cocada Café", foto: "cocadacafe.jpg" },
+        { id: "cocada_arequipe", nombre: "Cocada de Arequipe", foto: "cocadadearequipe.jpg" },
+        { id: "chicharron", nombre: "Chicharrón de Coco", foto: "chicharrondecoco.jpg" },
+        { id: "alegria", nombre: "Alegría de Millo", foto: "alegria.JPG" },
+        { id: "ajonjoli", nombre: "Ajonjolí", foto: "ajonjoli.jpg" }
     ];
     
     const PRECIO_UNITARIO = 5000;
     let carrito = {};
     let userCoords = "No proporcionada";
 
-    // Obtener geolocalización al cargar
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(pos => {
             userCoords = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-            document.getElementById('geo-status').innerText = "✅ Ubicación GPS vinculada";
+            document.getElementById('geo-status').innerText = "✅ Ubicación GPS vinculada correctamente";
+        }, () => {
+            document.getElementById('geo-status').innerText = "❌ No se pudo obtener el GPS";
         });
     }
 
     function cargarMenu() {
         const divMenu = document.getElementById('lista-dulces');
         MENU.forEach(item => {
-            carrito[item] = 0;
+            carrito[item.id] = 0;
             const card = document.createElement('div');
-            card.className = 'producto-item';
+            card.className = 'producto-card';
             card.innerHTML = `
-                <div class="producto-nombre">${item}</div>
-                <div class="controles">
-                    <button class="btn-accion" onclick="modificar('${item}', -1)">-</button>
-                    <span class="cantidad" id="cant-${item}">0</span>
-                    <button class="btn-accion" onclick="modificar('${item}', 1)">+</button>
+                <img src="${item.foto}" class="producto-img" alt="${item.nombre}">
+                <div class="producto-info">
+                    <div class="producto-nombre">${item.nombre}</div>
+                    <div class="producto-precio">$${PRECIO_UNITARIO.toLocaleString('es-CO')}</div>
+                    <div class="controles">
+                        <button class="btn-accion" onclick="modificar('${item.id}', -1)">-</button>
+                        <span class="cantidad" id="cant-${item.id}">0</span>
+                        <button class="btn-accion" onclick="modificar('${item.id}', 1)">+</button>
+                    </div>
                 </div>
             `;
             divMenu.appendChild(card);
         });
     }
 
-    function modificar(item, cant) {
-        if (carrito[item] + cant >= 0) {
-            carrito[item] += cant;
-            document.getElementById(`cant-${item}`).innerText = carrito[item];
+    function modificar(id, cant) {
+        if (carrito[id] + cant >= 0) {
+            carrito[id] += cant;
+            document.getElementById(`cant-${id}`).innerText = carrito[id];
             calcularTotal();
         }
     }
 
     function calcularTotal() {
         let total = 0;
-        for (let item in carrito) total += carrito[item] * PRECIO_UNITARIO;
+        for (let id in carrito) total += carrito[id] * PRECIO_UNITARIO;
         document.getElementById('txt-total').innerText = total.toLocaleString('es-CO');
     }
 
     function intentarEnvio() {
-        if (userCoords === "No proporcionada") {
-            navigator.geolocation.getCurrentPosition(pos => {
-                userCoords = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-                generarPedido();
-            }, () => {
-                generarPedido(); // Si falla el GPS, envía igual sin mapa
-            });
-        } else {
-            generarPedido();
-        }
-    }
-
-    function generarPedido() {
         const cliente = document.getElementById('nombre').value;
         const dir = document.getElementById('direccion').value;
         const tel = document.getElementById('celular').value;
-        const obs = document.getElementById('obs').value;
 
         if (!cliente || !dir) {
-            alert("Completa los datos de entrega");
+            alert("Por favor, ingresa tu nombre y dirección para la entrega.");
             return;
         }
 
-        const ahora = new Date();
-        const fechaCol = ahora.toLocaleString('es-CO', { timeZone: 'America/Bogota' });
+        let totalFinal = 0;
+        let listaPedido = "";
 
-        let factura = `*🧾 FACTURA DE PEDIDO - COCADAS*\n`;
-        factura += `_Fecha: ${fechaCol}_\n`;
+        MENU.forEach(item => {
+            if (carrito[item.id] > 0) {
+                let sub = carrito[item.id] * PRECIO_UNITARIO;
+                listaPedido += `• ${item.nombre} (x${carrito[id]}) : $${sub.toLocaleString('es-CO')}\n`;
+                totalFinal += sub;
+            }
+        });
+
+        if (totalFinal === 0) {
+            alert("Agrega al menos un dulce a tu pedido.");
+            return;
+        }
+
+        const fecha = new Date().toLocaleString('es-CO');
+        let factura = `*🧾 NUEVO PEDIDO - COCADAS*\n`;
+        factura += `_Fecha: ${fecha}_\n`;
         factura += `------------------------------------------\n`;
         factura += `*CLIENTE:* ${cliente}\n`;
         factura += `*DIRECCIÓN:* ${dir}\n`;
-        factura += `*GPS:* ${userCoords}\n`;
         factura += `*TEL:* ${tel}\n`;
-        if(obs) factura += `*NOTAS:* ${obs}\n`;
+        factura += `*UBICACIÓN:* ${userCoords}\n`;
         factura += `------------------------------------------\n`;
-        factura += `*PRODUCTOS:*\n`;
-
-        let totalFinal = 0;
-        let tieneItems = false;
-
-        for (let item in carrito) {
-            if (carrito[item] > 0) {
-                let sub = carrito[item] * PRECIO_UNITARIO;
-                factura += `• ${item} (x${carrito[item]}) : $${sub.toLocaleString('es-CO')}\n`;
-                totalFinal += sub;
-                tieneItems = true;
-            }
-        }
-
-        if (!tieneItems) { alert("Elige algún dulce"); return; }
-
+        factura += `*DETALLE:*\n${listaPedido}`;
         factura += `------------------------------------------\n`;
         factura += `*TOTAL A PAGAR: $${totalFinal.toLocaleString('es-CO')}*\n\n`;
-        factura += `🚀 _App por Vibras Positivas (3117700431)_`;
+        factura += `🚀 _App por Vibras Positivas_`;
 
         window.open(`https://wa.me/573117700431?text=${encodeURIComponent(factura)}`, '_blank');
     }
