@@ -75,7 +75,6 @@
             font-size: 1rem;
         }
 
-        /* Diseño de productos con imágenes */
         .producto-card {
             display: flex;
             align-items: center;
@@ -220,6 +219,7 @@
     let carrito = {};
     let userCoords = "No proporcionada";
 
+    // Manejo de Geolocalización corregido
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(pos => {
             userCoords = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
@@ -231,6 +231,7 @@
 
     function cargarMenu() {
         const divMenu = document.getElementById('lista-dulces');
+        divMenu.innerHTML = ""; // Limpiar antes de cargar
         MENU.forEach(item => {
             carrito[item.id] = 0;
             const card = document.createElement('div');
@@ -278,10 +279,11 @@
         let totalFinal = 0;
         let listaPedido = "";
 
+        // Corrección de la lógica de iteración
         MENU.forEach(item => {
             if (carrito[item.id] > 0) {
                 let sub = carrito[item.id] * PRECIO_UNITARIO;
-                listaPedido += `• ${item.nombre} (x${carrito[id]}) : $${sub.toLocaleString('es-CO')}\n`;
+                listaPedido += `• ${item.nombre} (x${carrito[item.id]}) : $${sub.toLocaleString('es-CO')}\n`;
                 totalFinal += sub;
             }
         });
@@ -305,10 +307,14 @@
         factura += `*TOTAL A PAGAR: $${totalFinal.toLocaleString('es-CO')}*\n\n`;
         factura += `🚀 _App por Vibras Positivas_`;
 
-        window.open(`https://wa.me/573117700431?text=${encodeURIComponent(factura)}`, '_blank');
+        // Abrir WhatsApp en pestaña nueva
+        const url = `https://wa.me/573117700431?text=${encodeURIComponent(factura)}`;
+        window.open(url, '_blank');
     }
 
+    // Inicializar
     cargarMenu();
 </script>
+
 </body>
 </html>
