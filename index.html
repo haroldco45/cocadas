@@ -66,13 +66,14 @@
 
         .campo { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
-        input, textarea {
+        input, textarea, select {
             width: 100%;
             padding: 12px;
             border: 2px solid #eee;
             border-radius: 12px;
             box-sizing: border-box;
             font-size: 1rem;
+            font-family: inherit;
         }
 
         .producto-card {
@@ -113,8 +114,6 @@
             justify-content: center;
         }
 
-        .cantidad { font-weight: bold; min-width: 20px; text-align: center; }
-
         .total-box {
             background: #333;
             color: var(--amarillo);
@@ -137,16 +136,12 @@
             font-weight: bold;
             margin-top: 20px;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: 0.3s;
         }
 
-        .btn-whatsapp:active { transform: scale(0.98); }
-
-        .geo-info {
-            font-size: 0.75rem;
-            color: #2e7d32;
-            margin-top: 5px;
-            font-style: italic;
+        .btn-whatsapp:disabled {
+            background: #ccc;
+            cursor: not-allowed;
         }
 
         footer {
@@ -177,7 +172,7 @@
     <div class="campo">
         <label>Dirección</label>
         <input type="text" id="direccion" placeholder="Calle, Carrera, Barrio">
-        <div id="geo-status" class="geo-info">📍 Detectando ubicación...</div>
+        <div id="geo-status" style="font-size: 0.75rem; color: #2e7d32; margin-top: 5px;">📍 Detectando ubicación...</div>
     </div>
     <div class="campo">
         <label>Celular</label>
@@ -185,26 +180,49 @@
     </div>
 
     <h2 class="seccion-titulo">Nuestro Menú</h2>
-    <div id="lista-dulces">
-        </div>
+    <div id="lista-dulces"></div>
+
+    <h2 class="seccion-titulo">Detalles del Pedido</h2>
+    <div class="campo">
+        <label>Forma de Pago (Informativo)</label>
+        <select id="pago">
+            <option value="Efectivo">Efectivo</option>
+            <option value="Transferencia">Transferencia (Nequi/Bancolombia)</option>
+        </select>
+    </div>
+    <div class="campo">
+        <label>Observaciones</label>
+        <textarea id="obs" rows="2" placeholder="Ej: Sin azúcar, entregar en portería..."></textarea>
+    </div>
 
     <div class="total-box">
         <h3>Total del Pedido</h3>
         <div class="monto">$<span id="txt-total">0</span></div>
     </div>
 
-    <button class="btn-whatsapp" onclick="intentarEnvio()">
+    <button id="btn-pedir" class="btn-whatsapp" onclick="intentarEnvio()">
         PEDIR POR WHATSAPP ➔
     </button>
 </div>
 
 <footer>
     <b>COCADAS - Caucasia, Antioquia</b><br>
-    Desarrollado por <b>Vibras Positivas</b><br>
+    Desarrollado por <b>Vibras Positivas (3117700431)</b><br>
     © 2026 Todos los derechos reservados
 </footer>
 
 <script>
+    // --- CONTROL DE SUSCRIPCIÓN ---
+    const FECHA_LIMITE = new Date('2026-12-31'); // Ajusta la fecha de vencimiento aquí
+    const hoy = new Date();
+    
+    if (hoy > FECHA_LIMITE) {
+        const btn = document.getElementById('btn-pedir');
+        btn.disabled = true;
+        btn.innerText = "SUSCRIPCIÓN VENCIDA (Contactar Soporte)";
+        btn.style.background = "#999";
+    }
+
     const MENU = [
         { id: "enyucado", nombre: "Enyucado", foto: "enyucado.JPG" },
         { id: "cocada_leche", nombre: "Cocada de Leche", foto: "cocadadeleche.jpg" },
@@ -219,7 +237,6 @@
     let carrito = {};
     let userCoords = "No proporcionada";
 
-    // Manejo de Geolocalización corregido
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(pos => {
             userCoords = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
@@ -231,19 +248,18 @@
 
     function cargarMenu() {
         const divMenu = document.getElementById('lista-dulces');
-        divMenu.innerHTML = ""; // Limpiar antes de cargar
         MENU.forEach(item => {
             carrito[item.id] = 0;
             const card = document.createElement('div');
             card.className = 'producto-card';
             card.innerHTML = `
-                <img src="${item.foto}" class="producto-img" alt="${item.nombre}">
+                <img src="${item.foto}" class="producto-img">
                 <div class="producto-info">
                     <div class="producto-nombre">${item.nombre}</div>
                     <div class="producto-precio">$${PRECIO_UNITARIO.toLocaleString('es-CO')}</div>
                     <div class="controles">
                         <button class="btn-accion" onclick="modificar('${item.id}', -1)">-</button>
-                        <span class="cantidad" id="cant-${item.id}">0</span>
+                        <span id="cant-${item.id}" style="font-weight:bold">0</span>
                         <button class="btn-accion" onclick="modificar('${item.id}', 1)">+</button>
                     </div>
                 </div>
@@ -270,16 +286,16 @@
         const cliente = document.getElementById('nombre').value;
         const dir = document.getElementById('direccion').value;
         const tel = document.getElementById('celular').value;
+        const pago = document.getElementById('pago').value;
+        const obs = document.getElementById('obs').value || "Ninguna";
 
         if (!cliente || !dir) {
-            alert("Por favor, ingresa tu nombre y dirección para la entrega.");
+            alert("Por favor, ingresa tu nombre y dirección.");
             return;
         }
 
         let totalFinal = 0;
         let listaPedido = "";
-
-        // Corrección de la lógica de iteración
         MENU.forEach(item => {
             if (carrito[item.id] > 0) {
                 let sub = carrito[item.id] * PRECIO_UNITARIO;
@@ -289,32 +305,28 @@
         });
 
         if (totalFinal === 0) {
-            alert("Agrega al menos un dulce a tu pedido.");
+            alert("Agrega al menos un dulce.");
             return;
         }
 
-        const fecha = new Date().toLocaleString('es-CO');
         let factura = `*🧾 NUEVO PEDIDO - COCADAS*\n`;
-        factura += `_Fecha: ${fecha}_\n`;
         factura += `------------------------------------------\n`;
         factura += `*CLIENTE:* ${cliente}\n`;
         factura += `*DIRECCIÓN:* ${dir}\n`;
         factura += `*TEL:* ${tel}\n`;
+        factura += `*PAGO:* ${pago}\n`;
         factura += `*UBICACIÓN:* ${userCoords}\n`;
         factura += `------------------------------------------\n`;
         factura += `*DETALLE:*\n${listaPedido}`;
+        factura += `*OBS:* ${obs}\n`;
         factura += `------------------------------------------\n`;
         factura += `*TOTAL A PAGAR: $${totalFinal.toLocaleString('es-CO')}*\n\n`;
-        factura += `🚀 _App por Vibras Positivas_`;
+        factura += `🚀 _App por Vibras Positivas (3117700431)_`;
 
-        // Abrir WhatsApp en pestaña nueva
-        const url = `https://wa.me/573117700431?text=${encodeURIComponent(factura)}`;
-        window.open(url, '_blank');
+        window.open(`https://wa.me/573117700431?text=${encodeURIComponent(factura)}`, '_blank');
     }
 
-    // Inicializar
     cargarMenu();
 </script>
-
 </body>
 </html>
